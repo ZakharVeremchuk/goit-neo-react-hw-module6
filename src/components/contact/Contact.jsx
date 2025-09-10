@@ -1,7 +1,9 @@
 import css from "./Contact.module.css";
+import {useDispatch} from 'react-redux';
+import { deleteContact } from '../../redux/contactsSlice';
 
-// {data: {id, text}}
-const Contact = ({ id, name, number, onDelete }) => {
+const Contact = ({ id, name, number }) => {
+  const dispatch = useDispatch();
   return (
     <div className={css.insideSection}>
       <div>
@@ -9,7 +11,7 @@ const Contact = ({ id, name, number, onDelete }) => {
         <p className={css.number}>{number}</p>
       </div>
       <div>
-        <button onClick={() => onDelete(id)}>Delete</button>
+        <button onClick={() => dispatch(deleteContact(id))}>Delete</button>
       </div>
     </div>
   );

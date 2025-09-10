@@ -1,7 +1,9 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useId } from "react";
 import { nanoid } from 'nanoid';
-import css from './ContactForm.module.css'
+import css from './ContactForm.module.css';
+import { useDispatch } from 'react-redux';
+import { addContact } from '../../redux/contactsSlice';
 import * as Yup from "yup";
 
 const ContactSchema = Yup.object().shape({
@@ -10,14 +12,15 @@ const ContactSchema = Yup.object().shape({
     .max(50, "Too Long!")
     .required("Required"),
   number: Yup.string()
-    .min(3, "Neeed to have 9 number")
-    .max(50, "Neeed to have 9 number")
+    .min(3, "Need to have 9 number")
+    .max(50, "Need to have 9 number")
     .required("Required")
 });
 
-const ContactForm = ({onAdd}) => {
+const ContactForm = () => {
   const nameFieldId = useId();
   const numberFieldId = useId();
+  const dispatch = useDispatch();
 
   const initialValues = {
     name: "",
@@ -26,24 +29,27 @@ const ContactForm = ({onAdd}) => {
 
   const handleSubmit = (values, actions) => {
     actions.resetForm();
-    onAdd({
-      id: nanoid(),
-      name: values.name,
-      number: values.number
-    })
+    dispatch(addContact({id: nanoid(), ...values}))
+    // onAdd({
+    //   id: nanoid(),
+    //   name: values.name,
+    //   number: values.number
+    // })
   };
 
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
-      vaidationSchema={ContactSchema}
+      validationSchema={ContactSchema}
     >
       <Form className={css.form}>
         <label className={css.label} htmlFor={nameFieldId}>Name:</label>
         <Field className={css.field} id={nameFieldId} type="text" name="name"/>
+        <ErrorMessage name="name" component="div" className={css.error} />
         <label className={css.label} htmlFor={numberFieldId}>Number:</label>
         <Field className={css.field} id={numberFieldId} type="text" name="number" />
+        <ErrorMessage name="number" component="div" className={css.error} />
         <button className={css.button} type="submit">
             Add Contact
         </button>
